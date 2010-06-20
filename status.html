@@ -4,7 +4,8 @@
       <script src="vaike/tuenti.vaike.js"></script>
       <script>
 
-      var pollInterval = 1000 * 5;  // 5 seconds
+      // polling interval
+      var pollInterval = 1000 * 5;
 
       var username;
 
@@ -12,7 +13,9 @@
       // true = logged in
       var userStatus = false;
 
+      // timer
       var scheduleTimer;
+
 
       /**
        * Opens the site
@@ -59,6 +62,7 @@
 
           killSchedule(scheduleTimer);
 
+          // get the username using the API
           VAIKE.tuenti.getUserName( function (un) {
 
               username = un;
@@ -80,13 +84,13 @@
 
 
 
-
       function init() {
 
           // default is logged off
           showLoggedOut();
           startRequest();
 
+          // the button opens the site
           chrome.browserAction.onClicked.addListener( function (tab) {
               openSite();
           });

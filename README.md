@@ -1,0 +1,1 @@
+Tuenti Status es una extensión de Google Chrome que le dice que usted está conectado o no.

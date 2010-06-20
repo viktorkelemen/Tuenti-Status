@@ -1,0 +1,99 @@
+<html>
+    <head>
+      <script src="vaike/xhr.vaike.js"></script>
+      <script src="vaike/tuenti.vaike.js"></script>
+      <script>
+
+      var pollInterval = 1000 * 5;  // 5 seconds
+
+      var username;
+
+      // false = logged off
+      // true = logged in
+      var userStatus = false;
+
+      var scheduleTimer;
+
+      /**
+       * Opens the site
+       */
+      function openSite() {
+          chrome.tabs.create({ url: "http://tuenti.com" });
+      }
+
+      /**
+       * Kills the timer
+       *
+       * @param {Object} scheduleTimer
+       */
+      function killSchedule(scheduleTimer) {
+          if (scheduleTimer !== undefined) {
+              clearTimeout(scheduleTimer);
+          }
+      }
+
+      /**
+       * Switch the icon to logged in and the title to the username
+       */
+      function showLoggedIn() {
+          chrome.browserAction.setIcon({path:"logged_in.png"});
+
+          if (username !== undefined)   {
+              chrome.browserAction.setTitle({ title: username });
+          }
+      }
+
+      /**
+       * Switch the icon to logged out and the title to 'Tuenti Status'
+       */
+      function showLoggedOut() {
+          chrome.browserAction.setIcon({path:"logged_out.png"});
+          chrome.browserAction.setTitle({ title: "Tuenti Status"});
+      }
+
+
+      /**
+       * Starts the username request
+       */
+      function startRequest() {
+
+          killSchedule(scheduleTimer);
+
+          VAIKE.tuenti.getUserName( function (un) {
+
+              username = un;
+              // if the user is logged in
+              if (un !== undefined) {
+                  if (!userStatus) {
+                      showLoggedIn();
+                      userStatus = true;
+                  }
+              } else {
+                  if (userStatus) {
+                      showLoggedOut();
+                      userStatus = false;
+                  }
+              }
+              scheduleTimer = window.setTimeout(startRequest, pollInterval);
+          });
+      }
+
+
+
+
+      function init() {
+
+          // default is logged off
+          showLoggedOut();
+          startRequest();
+
+          chrome.browserAction.onClicked.addListener( function (tab) {
+              openSite();
+          });
+      }
+
+      </script>
+    </head>
+    <body onload="init()">
+    </body>
+</html>
